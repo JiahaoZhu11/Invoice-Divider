@@ -245,12 +245,133 @@ void CInvoiceDividerDlg::OnBnClickedadd()
 {
 	// TODO: 在此添加控件通知处理程序代码
 
+	addInvoice();
+
+}
+
+
+void CInvoiceDividerDlg::OnLvnItemchangedinput(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
+	// TODO: 在此添加控件通知处理程序代码
+	*pResult = 0;
+}
+
+
+void CInvoiceDividerDlg::OnBnClickeddivide()
+{
+	// TODO: 在此添加控件通知处理程序代码
+
+	division();
+	
+}
+
+
+void CInvoiceDividerDlg::OnBnClickeddel()
+{
+	// TODO: 在此添加控件通知处理程序代码
+
+	if (!dataIn.empty())
+	{
+		totalPrice -= dataIn.back().iTprice;
+		strPrice.Format(_T("%.02f"), totalPrice);
+		SetDlgItemText(total, strPrice);
+		dataIn.pop_back();
+		inCount -= 1;
+		initialList.DeleteItem(inCount);
+	}
+
+}
+
+
+void CInvoiceDividerDlg::OnBnClickedclean()
+{
+	// TODO: 在此添加控件通知处理程序代码
+
+	totalPrice = 0;
+	strPrice.Format(_T("%.02f"), totalPrice);
+	SetDlgItemText(total, strPrice);
+	dataIn.clear();
+	inCount = 0;
+	initialList.DeleteAllItems();
+
+}
+
+BOOL CInvoiceDividerDlg::PreTranslateMessage(MSG* pMsg)
+{
+	// TODO: 在此添加专用代码和/或调用基类
+
+	if (pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_RETURN)
+	{
+		CString tempName;
+		CString tempUprice;
+		CString tempTprice;
+		CString tempNum;
+
+		GetDlgItemText(name, tempName);
+		GetDlgItemText(uprice, tempUprice);
+		GetDlgItemText(tprice, tempTprice);
+		GetDlgItemText(num, tempNum);
+		if (GetFocus()->GetDlgCtrlID() == name)
+		{
+			if (tempName == "")
+			{
+				warning(1);
+			}
+			else
+			{
+				GetDlgItem(uprice)->SetFocus();
+			}
+			return TRUE;
+		}
+		else if (GetFocus()->GetDlgCtrlID() == uprice)
+		{
+			if (tempUprice == "")
+			{
+				GetDlgItem(tprice)->SetFocus();
+				return TRUE;
+			}
+			GetDlgItem(num)->SetFocus();
+			return TRUE;
+		}
+		else if (GetFocus()->GetDlgCtrlID() == tprice)
+		{
+			if (tempTprice == "")
+			{
+				warning(2);
+				GetDlgItem(uprice)->SetFocus();
+				return TRUE;
+			}
+			GetDlgItem(num)->SetFocus();
+			return TRUE;
+		}
+		else if (GetFocus()->GetDlgCtrlID() == num)
+		{
+			addInvoice();
+			return TRUE;
+		}
+		else
+		{
+			return CDialogEx::PreTranslateMessage(pMsg);
+		}
+	}
+
+	if (pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_ESCAPE) return TRUE;
+
+	else return CDialogEx::PreTranslateMessage(pMsg);
+}
+
+
+void CInvoiceDividerDlg::addInvoice()
+{
+	// TODO: 在此处添加实现代码.
+
 	CString tempCount;
+	double calUprice;
+	double calTprice;
 	CString tempName;
 	CString tempUprice;
 	CString tempTprice;
-	double calUprice;
-	double calTprice;
 	CString tempNum;
 
 	GetDlgItemText(name, tempName);
@@ -260,28 +381,24 @@ void CInvoiceDividerDlg::OnBnClickedadd()
 
 	if (tempName == "")
 	{
-		noNameWarning nNa;
-		nNa.DoModal();
+		warning(1);
 		return;
 	}
 	if (tempUprice == "" && tempTprice == "")
 	{
-		noPriceWarning nPr;
-		nPr.DoModal();
+		warning(2);
 		return;
 	}
 
 	if (tempNum == "")
 	{
-		noNumWarning nNu;
-		nNu.DoModal();
+		warning(3);
 		return;
 	}
 
 	if (tempUprice != "" && tempTprice != "")
 	{
-		duoPriceWarning dPr;
-		dPr.DoModal();
+		warning(7);
 		return;
 	}
 
@@ -297,8 +414,7 @@ void CInvoiceDividerDlg::OnBnClickedadd()
 			}
 			else
 			{
-				invalidPriceWarning iUP;
-				iUP.DoModal();
+				warning(4);
 				return;
 			}
 		}
@@ -316,24 +432,22 @@ void CInvoiceDividerDlg::OnBnClickedadd()
 			}
 			else
 			{
-				invalidPriceWarning iTP;
-				iTP.DoModal();
+				warning(5);
 				return;
 			}
 		}
 	}
-	
+
 	for (int i = 0; i < tempNum.GetLength(); i++)
 	{
 		if (tempNum[i] < '0' || tempNum[i] > '9')
 		{
-			invalidNumWarning iNu;
-			iNu.DoModal();
+			warning(6);
 			return;
 		}
 	}
 
-	tempCount.Format(_T("%d"), inCount+1);
+	tempCount.Format(_T("%d"), inCount + 1);
 	initialList.InsertItem(inCount, tempCount);
 
 	if (tempTprice == "")
@@ -364,20 +478,14 @@ void CInvoiceDividerDlg::OnBnClickedadd()
 	strPrice.Format(_T("%.02f"), totalPrice);
 	SetDlgItemText(total, strPrice);
 
-	}
+	GetDlgItem(name)->SetFocus();
 
-
-void CInvoiceDividerDlg::OnLvnItemchangedinput(NMHDR* pNMHDR, LRESULT* pResult)
-{
-	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
-	// TODO: 在此添加控件通知处理程序代码
-	*pResult = 0;
 }
 
 
-void CInvoiceDividerDlg::OnBnClickeddivide()
+void CInvoiceDividerDlg::division()
 {
-	// TODO: 在此添加控件通知处理程序代码
+	// TODO: 在此处添加实现代码.
 
 	if (dataIn.empty())
 	{
@@ -395,7 +503,7 @@ void CInvoiceDividerDlg::OnBnClickeddivide()
 
 	dataOut.clear();
 	finalList.DeleteAllItems();
-	
+
 	for (size_t i = 0; i < dataIn.size(); i++)
 	{
 		if (dataIn[i].iTprice < freeSpace)
@@ -473,39 +581,65 @@ void CInvoiceDividerDlg::OnBnClickeddivide()
 		else
 		{
 			temp.Format(_T("%.02f"), dataOut[i].iTprice);
-		}		
+		}
 		finalList.SetItemText(i, 4, temp);
 	}
-	
+
 }
 
 
-void CInvoiceDividerDlg::OnBnClickeddel()
+// type of warning: 1 = no name, 2 = no price, 3 = no number, 4&5 = invalid price, 6 = invalid number, 7 = duo price
+void CInvoiceDividerDlg::warning(int type)
 {
-	// TODO: 在此添加控件通知处理程序代码
+	// TODO: 在此处添加实现代码.
 
-	if (!dataIn.empty())
+	if (type == 1)
 	{
-		totalPrice -= dataIn.back().iTprice;
-		strPrice.Format(_T("%.02f"), totalPrice);
-		SetDlgItemText(total, strPrice);
-		dataIn.pop_back();
-		inCount -= 1;
-		initialList.DeleteItem(inCount);
+		noNameWarning nNa;
+		nNa.DoModal();
+		GetDlgItem(name)->SetFocus();
 	}
 
-}
+	if (type == 2)
+	{
+		noPriceWarning nPr;
+		nPr.DoModal();
+		GetDlgItem(uprice)->SetFocus();
+	}
 
+	if (type == 3)
+	{
+		noNumWarning nNu;
+		nNu.DoModal();
+		GetDlgItem(num)->SetFocus();
+	}
 
-void CInvoiceDividerDlg::OnBnClickedclean()
-{
-	// TODO: 在此添加控件通知处理程序代码
+	if (type == 4)
+	{
+		invalidPriceWarning iPr;
+		iPr.DoModal();
+		GetDlgItem(uprice)->SetFocus();
+	}
 
-	totalPrice = 0;
-	strPrice.Format(_T("%.02f"), totalPrice);
-	SetDlgItemText(total, strPrice);
-	dataIn.clear();
-	inCount = 0;
-	initialList.DeleteAllItems();
+	if (type == 5)
+	{
+		invalidPriceWarning iPr;
+		iPr.DoModal();
+		GetDlgItem(tprice)->SetFocus();
+	}
+
+	if (type == 6)
+	{
+		invalidNumWarning iNu;
+		iNu.DoModal();
+		GetDlgItem(num)->SetFocus();
+	}
+
+	if (type == 7)
+	{
+		duoPriceWarning dPr;
+		dPr.DoModal();
+		GetDlgItem(uprice)->SetFocus();
+	}
 
 }

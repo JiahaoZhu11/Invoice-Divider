@@ -43,4 +43,9 @@ public:
 	afx_msg void OnBnClickeddivide();
 	afx_msg void OnBnClickeddel();
 	afx_msg void OnBnClickedclean();
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
+	void addInvoice();
+	void division();
+	// type of warning: 1 = no name, 2 = no price, 3 = no number, 4 = invalid price, 5 = invalid number, 6 = duo price
+	void warning(int type);
 };

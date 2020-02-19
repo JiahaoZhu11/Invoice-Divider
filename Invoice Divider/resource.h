@@ -39,6 +39,9 @@
 #define totalTitle                      1014
 #define divide3                         1015
 #define clean                           1015
+#define import                          1018
+#define clean3                          1019
+#define export                          1019
 
 // Next default values for new objects
 // 
