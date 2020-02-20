@@ -1,4 +1,4 @@
-# Invoice-Divider 2.0.1
+# Invoice-Divider 2.0.2
 This version enable editing and reasigned the function of "Enter" Key of the editing dialog.
 
 ### New Feature:
