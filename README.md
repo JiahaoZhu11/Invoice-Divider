@@ -1,10 +1,14 @@
 # Invoice-Divider 2.0.1
-This version reasigned the function of "Enter" and "Esc" Key.
+This version enable editing and reasigned the function of "Enter" Key of the editing dialog.
 
 ### New Feature:
-1. The "Esc" Key is disabled.
-2. The "Enter" Key works in the following way:
-    > When focus is at "name", if it is empty, warn; otherwise, go to "unit price".
-    > When focus is at "unit price", if it is empty, go to "total price"; otherwise, go to "number".
-    > When focus is at "total price", if it is empty, warn; otherwise, go to "number".
-    > When focus is at "number", if anything is missing, warn and go to it; otherwise add the invoice to the list then to to "name".
+1. Minor rearrangement of UI for better understanding and convenience.
+2. Double clicking one lane of the input list will pop up an editing dialog.
+3. Several features of the editing dialog:
+    > 1. When "name" or "number" is empty, the corresponding warning message will pop up.
+    > 2. When "number" is invalid, the corresponding warning message will pop up.
+    > 3. When "unit price" or "total price" is empty, it will be calculated from the other one.
+    > 4. Editing "number" and "unit price" will result in automatically re-calculating "total price".
+    > 5. Editing "total price" will result in automatically re-calculating "unit price".
+    > 6. The "editing" button will apply all changes to the input list and exit the editing dialog.
+    > 7. The "Enter" Key will do the same as the "editing" button.
