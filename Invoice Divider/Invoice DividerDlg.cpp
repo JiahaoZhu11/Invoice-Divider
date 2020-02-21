@@ -75,6 +75,7 @@ BEGIN_MESSAGE_MAP(CInvoiceDividerDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_DEL, &CInvoiceDividerDlg::OnBnClickedDel)
 	ON_BN_CLICKED(IDC_CLEAN, &CInvoiceDividerDlg::OnBnClickedClean)
 	ON_NOTIFY(NM_DBLCLK, IDC_INPUT, &CInvoiceDividerDlg::OnNMDblclkInput)
+	ON_BN_CLICKED(IDC_IMPORT, &CInvoiceDividerDlg::OnBnClickedImport)
 END_MESSAGE_MAP()
 
 
@@ -258,7 +259,7 @@ BOOL CInvoiceDividerDlg::PreTranslateMessage(MSG* pMsg)
 		{
 			if (tempName == "")
 			{
-				warning(1);
+				MessageBox(_T("请输入项目名称"), _T(""), 0x00000030L);
 			}
 			else
 			{
@@ -280,7 +281,7 @@ BOOL CInvoiceDividerDlg::PreTranslateMessage(MSG* pMsg)
 		{
 			if (tempTprice == "" && tempUprice == "")
 			{
-				warning(2);
+				MessageBox(_T("请输入项目价格"), _T(""), 0x00000030L);
 				GetDlgItem(IDC_UPRICE)->SetFocus();
 				return TRUE;
 			}
@@ -290,7 +291,6 @@ BOOL CInvoiceDividerDlg::PreTranslateMessage(MSG* pMsg)
 		else if (GetFocus()->GetDlgCtrlID() == IDC_NUM)
 		{
 			addInvoice();
-			GetDlgItem(IDC_NAME)->SetFocus();
 			return TRUE;
 		}
 		else if (GetFocus()->GetDlgCtrlID() == IDC_INPUT)
@@ -330,27 +330,27 @@ void CInvoiceDividerDlg::addInvoice()
 
 	if (tempName == "")
 	{
-		warning(1);
+		MessageBox(_T("请输入项目名称"), _T(""), 0x00000030L);
 		GetDlgItem(IDC_NAME)->SetFocus();
 		return;
 	}
 	if (tempUprice == "" && tempTprice == "")
 	{
-		warning(2);
+		MessageBox(_T("请输入项目价格"), _T(""), 0x00000030L);
 		GetDlgItem(IDC_UPRICE)->SetFocus();
 		return;
 	}
 
 	if (tempNum == "")
 	{
-		warning(3);
+		MessageBox(_T("请输入项目数量"), _T(""), 0x00000030L);
 		GetDlgItem(IDC_NUM)->SetFocus();
 		return;
 	}
 
 	if (tempUprice != "" && tempTprice != "")
 	{
-		warning(7);
+		MessageBox(_T("请勿同时输入单价和总价"), _T(""), 0x00000030L);
 		GetDlgItem(IDC_UPRICE)->SetFocus();
 		return;
 	}
@@ -367,7 +367,7 @@ void CInvoiceDividerDlg::addInvoice()
 			}
 			else
 			{
-				warning(4);
+				MessageBox(_T("请输入有效价格"), _T(""), 0x00000030L);
 				GetDlgItem(IDC_UPRICE)->SetFocus();
 				return;
 			}
@@ -386,7 +386,7 @@ void CInvoiceDividerDlg::addInvoice()
 			}
 			else
 			{
-				warning(5);
+				MessageBox(_T("请输入有效价格"), _T(""), 0x00000030L);
 				GetDlgItem(IDC_TPRICE)->SetFocus();
 				return;
 			}
@@ -397,7 +397,7 @@ void CInvoiceDividerDlg::addInvoice()
 	{
 		if (tempNum[i] < '0' || tempNum[i] > '9')
 		{
-			warning(6);
+			MessageBox(_T("请输入有效数量"), _T(""), 0x00000030L);
 			GetDlgItem(IDC_NUM)->SetFocus();
 			return;
 		}
@@ -565,4 +565,10 @@ void CInvoiceDividerDlg::showEditWindow(NMHDR* pNMHDR, LRESULT* pResult)
 		window.DoModal();
 	}
 
+}
+
+
+void CInvoiceDividerDlg::OnBnClickedImport()
+{
+	// TODO: 在此添加控件通知处理程序代码
 }

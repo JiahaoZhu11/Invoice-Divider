@@ -64,7 +64,7 @@ void editWindow::OnEnKillfocusName()
 
 	if (tempName == "")
 	{
-		warning(1);
+		MessageBox(_T("请输入项目名称"), _T(""), 0x00000030L);
 		GetDlgItem(IDC_NAME)->SetFocus();
 		return;
 	}
@@ -81,7 +81,7 @@ void editWindow::OnEnKillfocusNum()
 
 	if (tempNum == "")
 	{
-		warning(3);
+		MessageBox(_T("请输入项目数量"), _T(""), 0x00000030L);
 		GetDlgItem(IDC_NUM)->SetFocus();
 		return;
 	}
@@ -89,7 +89,7 @@ void editWindow::OnEnKillfocusNum()
 	{
 		if (tempNum[i] < '0' || tempNum[i] > '9')
 		{
-			warning(6);
+			MessageBox(_T("请输入有效数量"), _T(""), 0x00000030L);
 			GetDlgItem(IDC_NUM)->SetFocus();
 			return;
 		}
@@ -129,7 +129,7 @@ void editWindow::OnEnKillfocusUprice()
 				}
 				else
 				{
-					warning(4);
+					MessageBox(_T("请输入有效价格"), _T(""), 0x00000030L);
 					GetDlgItem(IDC_UPRICE)->SetFocus();
 					return;
 				}
@@ -171,7 +171,7 @@ void editWindow::OnEnKillfocusTprice()
 				}
 				else
 				{
-					warning(4);
+					MessageBox(_T("请输入有效价格"), _T(""), 0x00000030L);
 					GetDlgItem(IDC_TPRICE)->SetFocus();
 					return;
 				}

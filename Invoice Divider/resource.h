@@ -7,12 +7,6 @@
 #define IDS_ABOUTBOX                    101
 #define IDD_INVOICEDIVIDER_DIALOG       102
 #define IDR_MAINFRAME                   128
-#define IDD_NONAME_DIALOG               136
-#define IDD_NOPRICE_DIALOG              137
-#define IDD_NONUM_DIALOG                138
-#define IDD_DUOPRICE_DIALOG             139
-#define IDD_INVALIDPRICE_DIALOG         140
-#define IDD_INVALIDNUM_DIALOG           141
 #define IDD_EDIT_DIALOG                 142
 #define IDC_STATIC_NAME                 1000
 #define IDC_STATIC_TPRICE               1001

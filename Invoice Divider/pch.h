@@ -23,6 +23,3 @@ struct Invoice
 };
 
 Invoice newInvoice(int invoice, CString iName, double iUprice, double iTprice, int iNum);
-
-// type of warning: 1 = no name, 2 = no price, 3 = no number, 4 = invalid price, 5 = invalid number, 6 = duo price
-void warning(int type);

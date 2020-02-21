@@ -33,24 +33,6 @@
     <ClInclude Include="pch.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="noNameWarning.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="noPriceWarning.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="noNumWarning.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="duoPriceWarning.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="invalidPriceWarning.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="invalidNumWarning.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="editWindow.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -63,24 +45,6 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="pch.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="noNameWarning.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="noPriceWarning.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="noNumWarning.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="duoPriceWarning.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="invalidPriceWarning.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
-    <ClCompile Include="invalidNumWarning.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="editWindow.cpp">

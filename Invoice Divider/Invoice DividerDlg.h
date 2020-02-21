@@ -44,4 +44,5 @@ public:
 	void division();
 	afx_msg void OnNMDblclkInput(NMHDR* pNMHDR, LRESULT* pResult);
 	void showEditWindow(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnBnClickedImport();
 };

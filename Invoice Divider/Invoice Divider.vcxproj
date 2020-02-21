@@ -183,30 +183,18 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="duoPriceWarning.h" />
     <ClInclude Include="editWindow.h" />
     <ClInclude Include="framework.h" />
-    <ClInclude Include="invalidNumWarning.h" />
-    <ClInclude Include="invalidPriceWarning.h" />
     <ClInclude Include="Invoice Divider.h" />
     <ClInclude Include="Invoice DividerDlg.h" />
-    <ClInclude Include="noNameWarning.h" />
-    <ClInclude Include="noNumWarning.h" />
-    <ClInclude Include="noPriceWarning.h" />
     <ClInclude Include="pch.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="duoPriceWarning.cpp" />
     <ClCompile Include="editWindow.cpp" />
-    <ClCompile Include="invalidNumWarning.cpp" />
-    <ClCompile Include="invalidPriceWarning.cpp" />
     <ClCompile Include="Invoice Divider.cpp" />
     <ClCompile Include="Invoice DividerDlg.cpp" />
-    <ClCompile Include="noNameWarning.cpp" />
-    <ClCompile Include="noNumWarning.cpp" />
-    <ClCompile Include="noPriceWarning.cpp" />
     <ClCompile Include="pch.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
