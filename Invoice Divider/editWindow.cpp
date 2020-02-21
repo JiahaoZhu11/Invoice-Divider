@@ -55,20 +55,22 @@ BOOL editWindow::OnInitDialog()
 }
 
 
+BOOL EnterChecking = FALSE;
+
+
 void editWindow::OnEnKillfocusName()
 {
 	// TODO: 在此添加控件通知处理程序代码
 
-	CString tempName;
-	GetDlgItemText(IDC_NAME, tempName);
-
-	if (tempName == "")
+	if (EnterChecking)
 	{
-		MessageBox(_T("请输入项目名称"), _T(""), 0x00000030L);
-		GetDlgItem(IDC_NAME)->SetFocus();
 		return;
 	}
-	target->iName = tempName;
+	else
+	{
+		InputCheck(1);
+	}
+
 }
 
 
@@ -76,29 +78,14 @@ void editWindow::OnEnKillfocusNum()
 {
 	// TODO: 在此添加控件通知处理程序代码
 
-	CString tempNum;
-	GetDlgItemText(IDC_NUM, tempNum);
-
-	if (tempNum == "")
+	if (EnterChecking)
 	{
-		MessageBox(_T("请输入项目数量"), _T(""), 0x00000030L);
-		GetDlgItem(IDC_NUM)->SetFocus();
 		return;
 	}
-	for (int i = 0; i < tempNum.GetLength(); i++)
+	else
 	{
-		if (tempNum[i] < '0' || tempNum[i] > '9')
-		{
-			MessageBox(_T("请输入有效数量"), _T(""), 0x00000030L);
-			GetDlgItem(IDC_NUM)->SetFocus();
-			return;
-		}
+		InputCheck(2);
 	}
-	target->iNum = _ttoi(tempNum);
-	target->iTprice = target->iUprice * target->iNum;
-	CString strTprice;
-	strTprice.Format(_T("%.02f"), target->iTprice);
-	SetDlgItemText(IDC_TPRICE, strTprice);
 
 }
 
@@ -107,39 +94,13 @@ void editWindow::OnEnKillfocusUprice()
 {
 	// TODO: 在此添加控件通知处理程序代码
 
-	CString tempUprice;
-	GetDlgItemText(IDC_UPRICE, tempUprice);
-
-	if (tempUprice == "")
+	if (EnterChecking)
 	{
-		CString strUprice;
-		strUprice.Format(_T("%f"), target->iUprice);
-		SetDlgItemText(IDC_UPRICE, strUprice);
+		return;
 	}
 	else
 	{
-		bool decimal = FALSE;
-		for (int i = 0; i < tempUprice.GetLength(); i++)
-		{
-			if (tempUprice[i] < '0' || tempUprice[i] > '9')
-			{
-				if (tempUprice[i] == '.' && !decimal)
-				{
-					decimal = TRUE;
-				}
-				else
-				{
-					MessageBox(_T("请输入有效价格"), _T(""), 0x00000030L);
-					GetDlgItem(IDC_UPRICE)->SetFocus();
-					return;
-				}
-			}
-		}
-		target->iUprice = _tstof(tempUprice);
-		target->iTprice = target->iUprice * target->iNum;
-		CString strTprice;
-		strTprice.Format(_T("%.02f"), target->iTprice);
-		SetDlgItemText(IDC_TPRICE, strTprice);
+		InputCheck(3);
 	}
 
 }
@@ -149,39 +110,13 @@ void editWindow::OnEnKillfocusTprice()
 {
 	// TODO: 在此添加控件通知处理程序代码
 
-	CString tempTprice;
-	GetDlgItemText(IDC_TPRICE, tempTprice);
-
-	if (tempTprice == "")
+	if (EnterChecking)
 	{
-		CString strTprice;
-		strTprice.Format(_T("%.02f"), target->iTprice);
-		SetDlgItemText(IDC_TPRICE, strTprice);
+		return;
 	}
 	else
 	{
-		bool decimal = FALSE;
-		for (int i = 0; i < tempTprice.GetLength(); i++)
-		{
-			if (tempTprice[i] < '0' || tempTprice[i] > '9')
-			{
-				if (tempTprice[i] == '.' && !decimal)
-				{
-					decimal = TRUE;
-				}
-				else
-				{
-					MessageBox(_T("请输入有效价格"), _T(""), 0x00000030L);
-					GetDlgItem(IDC_TPRICE)->SetFocus();
-					return;
-				}
-			}
-		}
-		target->iTprice = _tstof(tempTprice);
-		target->iUprice = target->iTprice / target->iNum;
-		CString strUprice;
-		strUprice.Format(_T("%f"), target->iUprice);
-		SetDlgItemText(IDC_UPRICE, strUprice);
+		InputCheck(4);
 	}
 
 }
@@ -253,11 +188,145 @@ BOOL editWindow::PreTranslateMessage(MSG* pMsg)
 
 	if (pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_RETURN)
 	{
-		GetDlgItem(IDC_EDIT)->SetFocus();
-		modify();
-		EndDialog(0);
+		if (InputCheck(5))
+		{
+			modify();
+			EndDialog(0);
+		}
 		return TRUE;
 	}
 
 	return CDialogEx::PreTranslateMessage(pMsg);
+}
+
+
+// 1 = name, 2 = num, 3 = uprice, 4 = tprice, 5 == all
+// TRUE when all check passed
+BOOL editWindow::InputCheck(int type)
+{
+
+	if (type == 5)
+	{
+		EnterChecking = TRUE;
+	}
+	
+	if (type == 1 || type == 5)
+	{
+		CString tempName;
+		GetDlgItemText(IDC_NAME, tempName);
+
+		if (tempName == "")
+		{
+			EnterChecking = !MessageBox(_T("请输入项目名称"), _T(""), 0x00000030L);
+			GetDlgItem(IDC_NAME)->SetFocus();
+			return FALSE;
+		}
+		target->iName = tempName;
+	}
+
+	if (type == 2 || type == 5)
+	{
+		CString tempNum;
+		GetDlgItemText(IDC_NUM, tempNum);
+
+		if (tempNum == "")
+		{
+			EnterChecking = !MessageBox(_T("请输入项目数量"), _T(""), 0x00000030L);
+			GetDlgItem(IDC_NUM)->SetFocus();
+			return FALSE;
+		}
+		for (int i = 0; i < tempNum.GetLength(); i++)
+		{
+			if (tempNum[i] < '0' || tempNum[i] > '9')
+			{
+				EnterChecking = !MessageBox(_T("请输入有效数量"), _T(""), 0x00000030L);
+				GetDlgItem(IDC_NUM)->SetFocus();
+				return FALSE;
+			}
+		}
+		target->iNum = _ttoi(tempNum);
+		target->iTprice = target->iUprice * target->iNum;
+		CString strTprice;
+		strTprice.Format(_T("%.02f"), target->iTprice);
+		SetDlgItemText(IDC_TPRICE, strTprice);
+	}
+
+	if (type == 3 || type == 5)
+	{
+		CString tempUprice;
+		GetDlgItemText(IDC_UPRICE, tempUprice);
+
+		if (tempUprice == "")
+		{
+			CString strUprice;
+			strUprice.Format(_T("%f"), target->iUprice);
+			SetDlgItemText(IDC_UPRICE, strUprice);
+		}
+		else
+		{
+			bool decimal = FALSE;
+			for (int i = 0; i < tempUprice.GetLength(); i++)
+			{
+				if (tempUprice[i] < '0' || tempUprice[i] > '9')
+				{
+					if (tempUprice[i] == '.' && !decimal)
+					{
+						decimal = TRUE;
+					}
+					else
+					{
+						EnterChecking = !MessageBox(_T("请输入有效价格"), _T(""), 0x00000030L);
+						GetDlgItem(IDC_UPRICE)->SetFocus();
+						return FALSE;
+					}
+				}
+			}
+			target->iUprice = _tstof(tempUprice);
+			target->iTprice = target->iUprice * target->iNum;
+			CString strTprice;
+			strTprice.Format(_T("%.02f"), target->iTprice);
+			SetDlgItemText(IDC_TPRICE, strTprice);
+		}
+	}
+
+	if (type == 4 || type == 5)
+	{
+		CString tempTprice;
+	GetDlgItemText(IDC_TPRICE, tempTprice);
+
+	if (tempTprice == "")
+	{
+		CString strTprice;
+		strTprice.Format(_T("%.02f"), target->iTprice);
+		SetDlgItemText(IDC_TPRICE, strTprice);
+	}
+	else
+	{
+		bool decimal = FALSE;
+		for (int i = 0; i < tempTprice.GetLength(); i++)
+		{
+			if (tempTprice[i] < '0' || tempTprice[i] > '9')
+			{
+				if (tempTprice[i] == '.' && !decimal)
+				{
+					decimal = TRUE;
+				}
+				else
+				{
+					EnterChecking = !MessageBox(_T("请输入有效价格"), _T(""), 0x00000030L);
+					GetDlgItem(IDC_TPRICE)->SetFocus();
+					return FALSE;
+				}
+			}
+		}
+		target->iTprice = _tstof(tempTprice);
+		target->iUprice = target->iTprice / target->iNum;
+		CString strUprice;
+		strUprice.Format(_T("%f"), target->iUprice);
+		SetDlgItemText(IDC_UPRICE, strUprice);
+	}
+	}
+
+	return TRUE;
+
 }

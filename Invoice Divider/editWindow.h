@@ -37,4 +37,6 @@ public:
 	void display();
 	void modify();
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
+	// 1 = name, 2 = num, 3 = uprice, 4 = tprice
+	BOOL InputCheck(int type);
 };
