@@ -40,9 +40,13 @@ public:
 	afx_msg void OnBnClickedDel();
 	afx_msg void OnBnClickedClean();
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
-	void addInvoice();
+	BOOL addInvoice();
 	void division();
 	afx_msg void OnNMDblclkInput(NMHDR* pNMHDR, LRESULT* pResult);
 	void showEditWindow(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnBnClickedImport();
+	afx_msg void OnBnClickedExport();
+	void importFile(CString filename);
+	void exportFile(CString filename);
+//	afx_msg void OnNMReturnInput(NMHDR* pNMHDR, LRESULT* pResult);
 };

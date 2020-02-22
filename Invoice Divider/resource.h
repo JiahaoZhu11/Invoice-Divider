@@ -29,6 +29,7 @@
 #define IDC_EXPORT                      1019
 #define IDC_STATIC_OR                   1021
 #define IDC_EDIT                        1022
+#define IDC_TOTAL2                      1029
 
 // Next default values for new objects
 // 
