@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include "libxl.h"
+using namespace libxl;
 
 // CInvoiceDividerDlg 对话框
 class CInvoiceDividerDlg : public CDialogEx
@@ -48,5 +50,7 @@ public:
 	afx_msg void OnBnClickedExport();
 	void importFile(CString filename);
 	void exportFile(CString filename);
-//	afx_msg void OnNMReturnInput(NMHDR* pNMHDR, LRESULT* pResult);
+	void importBook(Book* book, CString filename);
+	CString removeEndZero(CString strNum);
+	void exportBook(Book* book, CString filename);
 };

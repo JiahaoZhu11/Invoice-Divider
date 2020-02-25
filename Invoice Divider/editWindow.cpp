@@ -217,7 +217,7 @@ BOOL editWindow::InputCheck(int type)
 
 		if (tempName == "")
 		{
-			EnterChecking = !MessageBox(_T("请输入项目名称"), _T(""), 0x00000030L);
+			EnterChecking = !MessageBox(_T("请输入项目名称！"), _T(""), 0x00000030L);
 			GetDlgItem(IDC_NAME)->SetFocus();
 			return FALSE;
 		}
@@ -231,7 +231,7 @@ BOOL editWindow::InputCheck(int type)
 
 		if (tempNum == "")
 		{
-			EnterChecking = !MessageBox(_T("请输入项目数量"), _T(""), 0x00000030L);
+			EnterChecking = !MessageBox(_T("请输入项目数量！"), _T(""), 0x00000030L);
 			GetDlgItem(IDC_NUM)->SetFocus();
 			return FALSE;
 		}
@@ -239,7 +239,7 @@ BOOL editWindow::InputCheck(int type)
 		{
 			if (tempNum[i] < '0' || tempNum[i] > '9')
 			{
-				EnterChecking = !MessageBox(_T("请输入有效数量"), _T(""), 0x00000030L);
+				EnterChecking = !MessageBox(_T("请输入有效数量！"), _T(""), 0x00000030L);
 				GetDlgItem(IDC_NUM)->SetFocus();
 				return FALSE;
 			}
@@ -275,7 +275,7 @@ BOOL editWindow::InputCheck(int type)
 					}
 					else
 					{
-						EnterChecking = !MessageBox(_T("请输入有效价格"), _T(""), 0x00000030L);
+						EnterChecking = !MessageBox(_T("请输入有效价格！"), _T(""), 0x00000030L);
 						GetDlgItem(IDC_UPRICE)->SetFocus();
 						return FALSE;
 					}
@@ -313,7 +313,7 @@ BOOL editWindow::InputCheck(int type)
 				}
 				else
 				{
-					EnterChecking = !MessageBox(_T("请输入有效价格"), _T(""), 0x00000030L);
+					EnterChecking = !MessageBox(_T("请输入有效价格！"), _T(""), 0x00000030L);
 					GetDlgItem(IDC_TPRICE)->SetFocus();
 					return FALSE;
 				}

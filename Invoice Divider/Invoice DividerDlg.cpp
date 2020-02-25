@@ -9,6 +9,7 @@
 #include "afxdialogex.h"
 #include "editWindow.h"
 #include <vector>
+
 using namespace std;
 
 #ifdef _DEBUG
@@ -261,7 +262,7 @@ BOOL CInvoiceDividerDlg::PreTranslateMessage(MSG* pMsg)
 		{
 			if (tempName == "")
 			{
-				MessageBox(_T("请输入项目名称"), _T(""), 0x00000030L);
+				MessageBox(_T("请输入项目名称！"), _T(""), 0x00000030L);
 			}
 			else
 			{
@@ -286,7 +287,7 @@ BOOL CInvoiceDividerDlg::PreTranslateMessage(MSG* pMsg)
 		{
 			if (tempTprice == "" && tempUprice == "")
 			{
-				MessageBox(_T("请输入项目价格"), _T(""), 0x00000030L);
+				MessageBox(_T("请输入项目价格!"), _T(""), 0x00000030L);
 				GetDlgItem(IDC_UPRICE)->SetFocus();
 				return TRUE;
 			}
@@ -341,27 +342,27 @@ BOOL CInvoiceDividerDlg::addInvoice()
 
 	if (tempName == "")
 	{
-		MessageBox(_T("请输入项目名称"), _T(""), 0x00000030L);
+		MessageBox(_T("请输入项目名称！"), _T(""), 0x00000030L);
 		GetDlgItem(IDC_NAME)->SetFocus();
 		return FALSE;
 	}
 	if (tempUprice == "" && tempTprice == "")
 	{
-		MessageBox(_T("请输入项目价格"), _T(""), 0x00000030L);
+		MessageBox(_T("请输入项目价格！"), _T(""), 0x00000030L);
 		GetDlgItem(IDC_UPRICE)->SetFocus();
 		return FALSE;
 	}
 
 	if (tempNum == "")
 	{
-		MessageBox(_T("请输入项目数量"), _T(""), 0x00000030L);
+		MessageBox(_T("请输入项目数量！"), _T(""), 0x00000030L);
 		GetDlgItem(IDC_NUM)->SetFocus();
 		return FALSE;
 	}
 
 	if (tempUprice != "" && tempTprice != "")
 	{
-		MessageBox(_T("请勿同时输入单价和总价"), _T(""), 0x00000030L);
+		MessageBox(_T("请勿同时输入单价和总价！"), _T(""), 0x00000030L);
 		GetDlgItem(IDC_UPRICE)->SetFocus();
 		SendDlgItemMessage(IDC_UPRICE, EM_SETSEL, 0, -1);
 		return FALSE;
@@ -379,7 +380,7 @@ BOOL CInvoiceDividerDlg::addInvoice()
 			}
 			else
 			{
-				MessageBox(_T("请输入有效价格"), _T(""), 0x00000030L);
+				MessageBox(_T("请输入有效价格！"), _T(""), 0x00000030L);
 				GetDlgItem(IDC_UPRICE)->SetFocus();
 				SendDlgItemMessage(IDC_UPRICE, EM_SETSEL, 0, -1);
 				return FALSE;
@@ -399,7 +400,7 @@ BOOL CInvoiceDividerDlg::addInvoice()
 			}
 			else
 			{
-				MessageBox(_T("请输入有效价格"), _T(""), 0x00000030L);
+				MessageBox(_T("请输入有效价格！"), _T(""), 0x00000030L);
 				GetDlgItem(IDC_TPRICE)->SetFocus();
 				SendDlgItemMessage(IDC_TPRICE, EM_SETSEL, 0, -1);
 				return FALSE;
@@ -411,7 +412,7 @@ BOOL CInvoiceDividerDlg::addInvoice()
 	{
 		if (tempNum[i] < '0' || tempNum[i] > '9')
 		{
-			MessageBox(_T("请输入有效数量"), _T(""), 0x00000030L);
+			MessageBox(_T("请输入有效数量！"), _T(""), 0x00000030L);
 			GetDlgItem(IDC_NUM)->SetFocus();
 			SendDlgItemMessage(IDC_NUM, EM_SETSEL, 0, -1);
 			return FALSE;
@@ -600,6 +601,9 @@ void CInvoiceDividerDlg::OnBnClickedImport()
 	{
 		filename = importFileDlg.GetPathName();
 	}
+
+	SendMessage(WM_COMMAND, (BN_CLICKED << 16) | IDC_CLEAN);
+
 	importFile(filename);
 
 }
@@ -610,20 +614,28 @@ void CInvoiceDividerDlg::OnBnClickedExport()
 	// TODO: 在此添加控件通知处理程序代码
 
 	CString filename;
+	CString folderPath;
 	CTime curTime = CTime::GetCurrentTime();
 	CString curDate= curTime.Format(_T("%y-%m-%d"));
 
-	CFileDialog exportFileDlg(FALSE, _T("txt"), curDate + _T(".txt"), OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
-		_T("Text Files (*.txt)|*.txt|"
+	CFileDialog exportFileDlg(FALSE, _T("xlsx"), curDate + _T(".xlsx"), OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
+		_T("Common Files (*.xls;*.xlsx;*.txt)|*.xls;*.xlsx;*.txt|"
 			"Worksheet Files (*.xlsx)|*.xlsx|"
 			"Worksheet Files 97-2003 (*.xls;)|*.xls|"
+			"Text Files (*.txt)|*.txt|"
 			"All Files (*.*)|*.*||"));
 
 	if (exportFileDlg.DoModal())
 	{
 		filename = exportFileDlg.GetPathName();
+		folderPath = exportFileDlg.GetFolderPath();
 	}
 	exportFile(filename);
+
+	if (MessageBox(_T("是否要打开文件夹？"), _T("文件已保存"), 0x00000004L | 0x00000040L) == 6)
+	{
+		ShellExecute(NULL, _T("open"), NULL, NULL, folderPath, SW_SHOWNORMAL);
+	}
 
 }
 
@@ -697,6 +709,10 @@ void CInvoiceDividerDlg::importFile(CString filename)
 					}
 					addInvoice();
 					temp = _T("");
+					SetDlgItemText(IDC_NAME, _T(""));
+					SetDlgItemText(IDC_UPRICE, _T(""));
+					SetDlgItemText(IDC_NUM, _T(""));
+					SetDlgItemText(IDC_TPRICE, _T(""));
 					col = 1;
 					row++;
 				}
@@ -705,6 +721,27 @@ void CInvoiceDividerDlg::importFile(CString filename)
 			{
 				temp += fileInfo[i];
 			}
+		}
+	}
+
+	else
+	{
+
+		if (filename.Right(4) == _T(".xls"))
+		{
+			Book* book = xlCreateBook();
+			importBook(book, filename);
+			book->release();
+		}
+		else if (filename.Right(5) == _T(".xlsx"))
+		{
+			Book* book = xlCreateXMLBook();
+			importBook(book, filename);
+			book->release();
+		}
+		else
+		{
+			MessageBox(_T("请选择正确的文件格式！"));
 		}
 	}
 
@@ -736,7 +773,6 @@ void CInvoiceDividerDlg::exportFile(CString filename)
 
 		for (size_t i = 0; i < dataOut.size(); i++)
 		{
-			//MessageBox(_T("in"));
 			lineInfo.Format(_T("%d,") + dataOut[i].iName + _T(",%f,%d,%.02f\r\n"), 
 				dataOut[i].invoice, dataOut[i].iUprice, dataOut[i].iNum, dataOut[i].iTprice);
 			fileOut.Write(lineInfo, lineInfo.GetLength() * 2);
@@ -745,14 +781,217 @@ void CInvoiceDividerDlg::exportFile(CString filename)
 		fileOut.Close();
 	}
 
+	else
+	{
+
+		if (filename.Right(4) == _T(".xls"))
+		{
+			Book* book = xlCreateBook();
+			exportBook(book, filename);
+			book->release();
+		}
+		else if (filename.Right(5) == _T(".xlsx"))
+		{
+			Book* book = xlCreateXMLBook();
+			exportBook(book, filename);
+			book->release();
+		}
+		else
+		{
+			MessageBox(_T("请选择正确的文件格式！"));
+		}
+	}
+
 }
 
 
-//void CInvoiceDividerDlg::OnNMReturnInput(NMHDR* pNMHDR, LRESULT* pResult)
-//{
-//	// TODO: 在此添加控件通知处理程序代码
-//
-//	showEditWindow(pNMHDR, pResult);
-//
-//	*pResult = 0;
-//}
+void CInvoiceDividerDlg::importBook(Book* book, CString filename)
+{
+	// TODO: 在此处添加实现代码.
+
+	book->setKey(L"TommoT", L"windows-2421220b07c2e10a6eb96768a2p7r6gc");
+
+	CString temp;
+	CString tempUprice;
+	bool decimal = FALSE;
+
+	if (book->load(filename))
+	{
+		Sheet* sheet = book->getSheet(0);
+		if (sheet)
+		{
+			for (int row = sheet->firstRow() + 1; row < sheet->lastRow(); row++)
+			{
+				for (int col = sheet->firstCol() + 1; col < sheet->firstCol() + 5; col++)
+				{
+					CellType cellType = sheet->cellType(row, col);
+
+					if (col == sheet->firstCol() + 1)
+					{
+						switch (cellType)
+						{
+						case CELLTYPE_EMPTY: break;
+						case CELLTYPE_NUMBER:
+						{
+							temp.Format(_T("%f"), sheet->readNum(row, col));
+							temp = removeEndZero(temp);
+							SetDlgItemText(IDC_NAME, temp);
+							break;
+						}
+						case CELLTYPE_STRING:
+						{
+							SetDlgItemText(IDC_NAME, sheet->readStr(row, col));
+							break;
+						}
+						case CELLTYPE_BOOLEAN: break;
+						case CELLTYPE_BLANK: break;
+						case CELLTYPE_ERROR: break;
+						}
+					}
+					else if (col == sheet->firstCol() + 2)
+					{
+						switch (cellType)
+						{
+						case CELLTYPE_EMPTY: break;
+						case CELLTYPE_NUMBER:
+						{
+							tempUprice.Format(_T("%f"), sheet->readNum(row, col));
+							tempUprice = removeEndZero(tempUprice);
+							break;
+						}
+						case CELLTYPE_STRING:
+						{
+							tempUprice = sheet->readStr(row, col);
+							break;
+						}
+						case CELLTYPE_BOOLEAN: break;
+						case CELLTYPE_BLANK: break;
+						case CELLTYPE_ERROR: break;
+						}
+					}
+					else if (col == sheet->firstCol() + 3)
+					{
+						switch (cellType)
+						{
+						case CELLTYPE_EMPTY: break;
+						case CELLTYPE_NUMBER:
+						{
+							temp.Format(_T("%f"), sheet->readNum(row, col));
+							temp = removeEndZero(temp);
+							SetDlgItemText(IDC_NUM, temp);
+							break;
+						}
+						case CELLTYPE_STRING:
+						{
+							SetDlgItemText(IDC_NUM, sheet->readStr(row, col));
+							break;
+						}
+						case CELLTYPE_BOOLEAN: break;
+						case CELLTYPE_BLANK: break;
+						case CELLTYPE_ERROR: break;
+						}
+					}
+					else if (col == sheet->firstCol() + 4)
+					{
+						switch (cellType)
+						{
+						case CELLTYPE_EMPTY:
+						{
+							if (tempUprice != _T(""))
+							{
+								SetDlgItemText(IDC_UPRICE, tempUprice);
+							}
+							break;
+						}
+						case CELLTYPE_NUMBER:
+						{
+							temp.Format(_T("%f"), sheet->readNum(row, col));
+							temp = removeEndZero(temp);
+							SetDlgItemText(IDC_TPRICE, temp);
+							break;
+						}
+						case CELLTYPE_STRING:
+						{
+							SetDlgItemText(IDC_TPRICE, sheet->readStr(row, col));
+							break;
+						}
+						case CELLTYPE_BOOLEAN: break;
+						case CELLTYPE_BLANK: break;
+						case CELLTYPE_ERROR: break;
+						}
+
+						if (!addInvoice())
+						{
+							return;
+						}
+						SetDlgItemText(IDC_NAME, _T(""));
+						SetDlgItemText(IDC_UPRICE, _T(""));
+						SetDlgItemText(IDC_NUM, _T(""));
+						SetDlgItemText(IDC_TPRICE, _T(""));
+					}
+				}
+			}
+		}
+	}
+	else
+	{
+		MessageBox((LPCTSTR)book->errorMessage(), _T(""), 0x00000010L);
+	}
+
+}
+
+
+CString CInvoiceDividerDlg::removeEndZero(CString strNum)
+{
+	// TODO: 在此处添加实现代码.
+
+	BOOL decimal = FALSE;
+
+	for (int i = strNum.GetLength() - 1; i > -1; i--)
+	{
+		if ((CString)strNum[i] == _T("0"))
+		{
+			strNum.Delete(strNum.GetLength() - 1, 1);
+		}
+		else if ((CString)strNum[i] == _T(".") && !decimal)
+		{
+			decimal = TRUE;
+			strNum.Delete(strNum.GetLength() - 1, 1);
+		}
+		else
+		{
+			break;
+		}
+	}
+	return strNum;
+
+}
+
+
+void CInvoiceDividerDlg::exportBook(Book* book, CString filename)
+{
+	// TODO: 在此处添加实现代码.
+
+	book->setKey(L"TommoT", L"windows-2421220b07c2e10a6eb96768a2p7r6gc");
+	
+	Sheet* sheet = book->addSheet(_T("Sheet") + book->sheetCount());
+	sheet->setDisplayGridlines(true);
+
+	sheet->writeStr(0, 0, _T("发票"));
+	sheet->writeStr(0, 1, _T("项目"));
+	sheet->writeStr(0, 2, _T("单价"));
+	sheet->writeStr(0, 3, _T("数量"));
+	sheet->writeStr(0, 4, _T("总价"));
+
+	for (int row = 0; row < finalList.GetItemCount(); row++)
+	{
+		sheet->writeStr(row + 1, 0, finalList.GetItemText(row, 0));
+		sheet->writeStr(row + 1, 1, finalList.GetItemText(row, 1));
+		sheet->writeStr(row + 1, 2, finalList.GetItemText(row, 2));
+		sheet->writeStr(row + 1, 3, finalList.GetItemText(row, 3));
+		sheet->writeStr(row + 1, 4, finalList.GetItemText(row, 4));
+	}
+
+	book->save(filename);
+
+}
