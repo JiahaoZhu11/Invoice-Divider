@@ -1,9 +1,15 @@
-# Invoice-Divider 2.1.0
-This version reorganized and annotated the code for opening source
+# Invoice Divider 2.1.0
+Dividing invoices to under 100,000 RMB pretax each.
 
-### New Feature:
-1. This code is better organized and annotated for reading more conveniently.
-2. The function of exporting data to .txt files is improved to read frim the control list instead of the data vector.
+### Feature:
+1. Allow manually adding items.
+2. Allow manually deleting the most recent item.
+3. Allow manually deleting all the items.
+4. Allow importing data from .xlsx, .xls and .txt files.
+5. Allow exporting data to .xlsx, .xls and .txt files.
+6. The data inserted will show in the left list.
+7. The data divided will show in the right list.
+8. Error messages will show up for missing parameter or invalid input.
 
 ### Special Notes:
-This version is first stable version of the 2.0.0 series.
+The importing and exporting features are based on LibXL.
