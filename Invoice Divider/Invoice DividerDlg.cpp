@@ -756,29 +756,24 @@ void CInvoiceDividerDlg::exportFile(CString filename)
 	{
 		CFile fileOut;
 
-
-
 		const int UNICODE_TXT_FLG = 0xFEFF; //UNICODE文本标示
 		CString lineInfo;
 		lineInfo.Format(_T("发票,项目,单价,数量,总价\r\n")); // 注意：输出的字节数与字符数并不一致
 
-
-
 		fileOut.Open(filename, CFile::modeCreate | CFile::modeWrite);
 		fileOut.Write(&UNICODE_TXT_FLG, 2);
 		fileOut.Write(lineInfo, lineInfo.GetLength() * 2);
-		
-		
 
-
-		for (size_t i = 0; i < dataOut.size(); i++)
+		for (int row = 0; row < finalList.GetItemCount(); row++)
 		{
-			lineInfo.Format(_T("%d,") + dataOut[i].iName + _T(",%f,%d,%.02f\r\n"), 
-				dataOut[i].invoice, dataOut[i].iUprice, dataOut[i].iNum, dataOut[i].iTprice);
+			lineInfo.Format(_T("{},{},{},{},{}"),
+				finalList.GetItemText(row, 0),
+				finalList.GetItemText(row, 1),
+				finalList.GetItemText(row, 2),
+				finalList.GetItemText(row, 3),
+				finalList.GetItemText(row, 4));
 			fileOut.Write(lineInfo, lineInfo.GetLength() * 2);
 		}
-
-		fileOut.Close();
 	}
 
 	else
