@@ -55,13 +55,19 @@ BOOL editWindow::OnInitDialog()
 }
 
 
+
+//变量
+
+//是否在“Enter”键检查中
 BOOL EnterChecking = FALSE;
 
 
+
+//操作函数
+
+//“Name”编辑框失去焦点
 void editWindow::OnEnKillfocusName()
 {
-	// TODO: 在此添加控件通知处理程序代码
-
 	if (EnterChecking)
 	{
 		return;
@@ -70,14 +76,12 @@ void editWindow::OnEnKillfocusName()
 	{
 		InputCheck(1);
 	}
-
 }
 
 
+//“Num”编辑框失去焦点
 void editWindow::OnEnKillfocusNum()
 {
-	// TODO: 在此添加控件通知处理程序代码
-
 	if (EnterChecking)
 	{
 		return;
@@ -86,14 +90,12 @@ void editWindow::OnEnKillfocusNum()
 	{
 		InputCheck(2);
 	}
-
 }
 
 
+//“Uprice”编辑框失去焦点
 void editWindow::OnEnKillfocusUprice()
 {
-	// TODO: 在此添加控件通知处理程序代码
-
 	if (EnterChecking)
 	{
 		return;
@@ -102,14 +104,12 @@ void editWindow::OnEnKillfocusUprice()
 	{
 		InputCheck(3);
 	}
-
 }
 
 
+//“Tprice”编辑框失去焦点
 void editWindow::OnEnKillfocusTprice()
 {
-	// TODO: 在此添加控件通知处理程序代码
-
 	if (EnterChecking)
 	{
 		return;
@@ -118,34 +118,49 @@ void editWindow::OnEnKillfocusTprice()
 	{
 		InputCheck(4);
 	}
-
 }
 
 
+//点击“修改”按钮
 void editWindow::OnBnClickedEdit()
 {
-	// TODO: 在此添加控件通知处理程序代码
-
 	modify();
 	EndDialog(0);
-
 }
 
 
+//键盘信息拦截处理
+BOOL editWindow::PreTranslateMessage(MSG* pMsg)
+{
+	//“Enter”键处理
+	if (pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_RETURN)
+	{
+		if (InputCheck(5))
+		{
+			modify();
+			EndDialog(0);
+		}
+		return TRUE;
+	}
+	//默认输出
+	return CDialogEx::PreTranslateMessage(pMsg);
+}
+
+
+//关闭对话框
 void editWindow::OnClose()
 {
-	// TODO: 在此添加消息处理程序代码和/或调用默认值
-
 	display();
-
 	CDialogEx::OnClose();
 }
 
 
+
+//辅助函数
+
+//显示原数据
 void editWindow::display()
 {
-	// TODO: 在此处添加实现代码.
-
 	SetDlgItemText(IDC_NAME, target->iName);
 	CString strUprice;
 	strUprice.Format(_T("%f"), target->iUprice);
@@ -156,14 +171,12 @@ void editWindow::display()
 	CString strNum;
 	strNum.Format(_T("%d"), target->iNum);
 	SetDlgItemText(IDC_NUM, strNum);
-
 }
 
 
+//修改数据
 void editWindow::modify()
 {
-	// TODO: 在此处添加实现代码.
-
 	CString strUprice;
 	strUprice.Format(_T("%f"), target->iUprice);
 	SetDlgItemText(IDC_UPRICE, strUprice);
@@ -178,33 +191,14 @@ void editWindow::modify()
 	initialList->SetItemText(target->invoice - 1, 2, strUprice);
 	initialList->SetItemText(target->invoice - 1, 3, strNum);
 	initialList->SetItemText(target->invoice - 1, 4, strTprice);
-
 }
 
 
-BOOL editWindow::PreTranslateMessage(MSG* pMsg)
-{
-	// TODO: 在此添加专用代码和/或调用基类
-
-	if (pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_RETURN)
-	{
-		if (InputCheck(5))
-		{
-			modify();
-			EndDialog(0);
-		}
-		return TRUE;
-	}
-
-	return CDialogEx::PreTranslateMessage(pMsg);
-}
-
-
-// 1 = name, 2 = num, 3 = uprice, 4 = tprice, 5 == all
-// TRUE when all check passed
+//检查输入数据
+// 1 = name, 2 = num, 3 = uprice, 4 = tprice, 5 = 全部（“Enter”键检查）
+// TRUE当通过所以检查
 BOOL editWindow::InputCheck(int type)
 {
-
 	if (type == 5)
 	{
 		EnterChecking = TRUE;
@@ -328,5 +322,4 @@ BOOL editWindow::InputCheck(int type)
 	}
 
 	return TRUE;
-
 }

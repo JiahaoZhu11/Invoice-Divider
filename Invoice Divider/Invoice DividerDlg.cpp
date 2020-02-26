@@ -182,43 +182,31 @@ HCURSOR CInvoiceDividerDlg::OnQueryDragIcon()
 }
 
 
+
 //全局变量
+
+//总金额
 double totalPrice = 0;
 CString strPrice;
+
+//储存列表中数据
 vector<Invoice> dataIn;
 vector<Invoice> dataOut;
 
 
+
+//操作函数
+
+//点击“添加”按钮
 void CInvoiceDividerDlg::OnBnClickedAdd()
 {
-	// TODO: 在此添加控件通知处理程序代码
-
 	addInvoice();
-
 }
 
 
-void CInvoiceDividerDlg::OnLvnItemchangedInput(NMHDR* pNMHDR, LRESULT* pResult)
-{
-	LPNMLISTVIEW pNMLV = reinterpret_cast<LPNMLISTVIEW>(pNMHDR);
-	// TODO: 在此添加控件通知处理程序代码
-	*pResult = 0;
-}
-
-
-void CInvoiceDividerDlg::OnBnClickedDivide()
-{
-	// TODO: 在此添加控件通知处理程序代码
-
-	division();
-	
-}
-
-
+//点击“撤销”按钮
 void CInvoiceDividerDlg::OnBnClickedDel()
 {
-	// TODO: 在此添加控件通知处理程序代码
-
 	if (!dataIn.empty())
 	{
 		totalPrice -= dataIn.back().iTprice;
@@ -227,26 +215,92 @@ void CInvoiceDividerDlg::OnBnClickedDel()
 		dataIn.pop_back();
 		initialList.DeleteItem((int)dataIn.size());
 	}
-
 }
 
 
+//点击“清除”按钮
 void CInvoiceDividerDlg::OnBnClickedClean()
 {
-	// TODO: 在此添加控件通知处理程序代码
-
 	totalPrice = 0;
-	strPrice.Format(_T("%.02f"), totalPrice);
-	SetDlgItemText(IDC_TOTAL, strPrice);
+	SetDlgItemText(IDC_TOTAL, _T("0.00"));
 	dataIn.clear();
 	initialList.DeleteAllItems();
-
 }
 
+
+//点击“分配”按钮
+void CInvoiceDividerDlg::OnBnClickedDivide()
+{
+	division();
+}
+
+
+//点击“导入”按钮
+void CInvoiceDividerDlg::OnBnClickedImport()
+{
+	CString filename;
+
+	CFileDialog importFileDlg(TRUE, NULL, NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
+		_T("Common Files (*.xls;*.xlsx;*.txt)|*.xls;*.xlsx;*.txt|"
+			"Worksheet Files (*.xls;*.xlsx)|*.xls;*.xlsx|"
+			"Text Files (*.txt)|*.txt|"
+			"All Files (*.*)|*.*||"));
+
+	if (importFileDlg.DoModal())
+	{
+		filename = importFileDlg.GetPathName();
+	}
+
+	SendMessage(WM_COMMAND, (BN_CLICKED << 16) | IDC_CLEAN);
+
+	importFile(filename);
+}
+
+
+//点击“导出”按钮
+void CInvoiceDividerDlg::OnBnClickedExport()
+{
+	CString filename;
+	CString folderPath;
+	CTime curTime = CTime::GetCurrentTime();
+	CString curDate= curTime.Format(_T("%y-%m-%d"));
+
+	CFileDialog exportFileDlg(FALSE, _T("xlsx"), curDate + _T(".xlsx"), OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
+		_T("Common Files (*.xls;*.xlsx;*.txt)|*.xls;*.xlsx;*.txt|"
+			"Worksheet Files (*.xlsx)|*.xlsx|"
+			"Worksheet Files 97-2003 (*.xls;)|*.xls|"
+			"Text Files (*.txt)|*.txt|"
+			"All Files (*.*)|*.*||"));
+
+	if (exportFileDlg.DoModal())
+	{
+		filename = exportFileDlg.GetPathName();
+		folderPath = exportFileDlg.GetFolderPath();
+	}
+	exportFile(filename);
+
+	if (MessageBox(_T("是否要打开文件夹？"), _T("文件已保存"), 0x00000004L | 0x00000040L) == 6)
+	{
+		ShellExecute(NULL, _T("open"), NULL, NULL, folderPath, SW_SHOWNORMAL);
+	}
+}
+
+
+//修改录入项目
+void CInvoiceDividerDlg::OnNMDblclkInput(NMHDR* pNMHDR, LRESULT* pResult)
+{
+	LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
+	
+	showEditWindow(pNMHDR, pResult);
+
+	*pResult = 0;
+}
+
+
+//键盘信息拦截处理
 BOOL CInvoiceDividerDlg::PreTranslateMessage(MSG* pMsg)
 {
-	// TODO: 在此添加专用代码和/或调用基类
-
+	//“Enter”键处理
 	if (pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_RETURN)
 	{
 		CString tempName;
@@ -315,17 +369,19 @@ BOOL CInvoiceDividerDlg::PreTranslateMessage(MSG* pMsg)
 			return CDialogEx::PreTranslateMessage(pMsg);
 		}
 	}
-
-	if (pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_ESCAPE) return TRUE;
-
+	//“Esc”键处理
+	else if (pMsg->message == WM_KEYDOWN && pMsg->wParam == VK_ESCAPE) return TRUE;
+	//默认输出
 	else return CDialogEx::PreTranslateMessage(pMsg);
 }
 
 
+
+//辅助函数
+
+//添加新的项目
 BOOL CInvoiceDividerDlg::addInvoice()
 {
-	// TODO: 在此处添加实现代码.
-
 	CString tempCount;
 	double calUprice = 0;
 	double calTprice = 0;
@@ -449,14 +505,12 @@ BOOL CInvoiceDividerDlg::addInvoice()
 	SetDlgItemText(IDC_TOTAL, strPrice);
 
 	return TRUE;
-
 }
 
 
+//分配录入项目
 void CInvoiceDividerDlg::division()
 {
-	// TODO: 在此处添加实现代码.
-
 	if (dataIn.empty())
 	{
 		return;
@@ -553,25 +607,12 @@ void CInvoiceDividerDlg::division()
 		}
 		finalList.SetItemText(i, 4, temp);
 	}
-
 }
 
 
-void CInvoiceDividerDlg::OnNMDblclkInput(NMHDR* pNMHDR, LRESULT* pResult)
-{
-	LPNMITEMACTIVATE pNMItemActivate = reinterpret_cast<LPNMITEMACTIVATE>(pNMHDR);
-	// TODO: 在此添加控件通知处理程序代码
-
-	showEditWindow(pNMHDR, pResult);
-
-	*pResult = 0;
-}
-
-
+//显示修改对话框
 void CInvoiceDividerDlg::showEditWindow(NMHDR* pNMHDR, LRESULT* pResult)
 {
-	// TODO: 在此处添加实现代码.
-
 	NM_LISTVIEW* pNMListView = (NM_LISTVIEW*)pNMHDR;
 
 	if (pNMListView->iItem != -1)
@@ -581,74 +622,19 @@ void CInvoiceDividerDlg::showEditWindow(NMHDR* pNMHDR, LRESULT* pResult)
 		window.initialList = &initialList;
 		window.DoModal();
 	}
-
 }
 
 
-void CInvoiceDividerDlg::OnBnClickedImport()
-{
-	// TODO: 在此添加控件通知处理程序代码
-
-	CString filename;
-
-	CFileDialog importFileDlg(TRUE, NULL, NULL, OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
-		_T("Common Files (*.xls;*.xlsx;*.txt)|*.xls;*.xlsx;*.txt|"
-			"Worksheet Files (*.xls;*.xlsx)|*.xls;*.xlsx|"
-			"Text Files (*.txt)|*.txt|"
-			"All Files (*.*)|*.*||"));
-
-	if (importFileDlg.DoModal())
-	{
-		filename = importFileDlg.GetPathName();
-	}
-
-	SendMessage(WM_COMMAND, (BN_CLICKED << 16) | IDC_CLEAN);
-
-	importFile(filename);
-
-}
-
-
-void CInvoiceDividerDlg::OnBnClickedExport()
-{
-	// TODO: 在此添加控件通知处理程序代码
-
-	CString filename;
-	CString folderPath;
-	CTime curTime = CTime::GetCurrentTime();
-	CString curDate= curTime.Format(_T("%y-%m-%d"));
-
-	CFileDialog exportFileDlg(FALSE, _T("xlsx"), curDate + _T(".xlsx"), OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
-		_T("Common Files (*.xls;*.xlsx;*.txt)|*.xls;*.xlsx;*.txt|"
-			"Worksheet Files (*.xlsx)|*.xlsx|"
-			"Worksheet Files 97-2003 (*.xls;)|*.xls|"
-			"Text Files (*.txt)|*.txt|"
-			"All Files (*.*)|*.*||"));
-
-	if (exportFileDlg.DoModal())
-	{
-		filename = exportFileDlg.GetPathName();
-		folderPath = exportFileDlg.GetFolderPath();
-	}
-	exportFile(filename);
-
-	if (MessageBox(_T("是否要打开文件夹？"), _T("文件已保存"), 0x00000004L | 0x00000040L) == 6)
-	{
-		ShellExecute(NULL, _T("open"), NULL, NULL, folderPath, SW_SHOWNORMAL);
-	}
-
-}
-
-
+//导入文件
 void CInvoiceDividerDlg::importFile(CString filename)
 {
-	// TODO: 在此处添加实现代码.
-
 	if (filename.Right(4) == _T(".txt"))
 	{
 		CString fileInfo;
+
 		CFile fileIn;
 		fileIn.Open(filename, CFile::modeRead);
+
 		char charInfo[10240] = { 0 };
 		fileIn.Read(charInfo, sizeof(charInfo));
 		int nBufferSize = MultiByteToWideChar(CP_UTF8, 0, charInfo, -1, NULL, 0); //取得所需缓存的多少
@@ -723,7 +709,6 @@ void CInvoiceDividerDlg::importFile(CString filename)
 			}
 		}
 	}
-
 	else
 	{
 
@@ -744,66 +729,12 @@ void CInvoiceDividerDlg::importFile(CString filename)
 			MessageBox(_T("请选择正确的文件格式！"));
 		}
 	}
-
 }
 
 
-void CInvoiceDividerDlg::exportFile(CString filename)
-{
-	// TODO: 在此处添加实现代码.
-
-	if (filename.Right(4) == _T(".txt"))
-	{
-		CFile fileOut;
-
-		const int UNICODE_TXT_FLG = 0xFEFF; //UNICODE文本标示
-		CString lineInfo;
-		lineInfo.Format(_T("发票,项目,单价,数量,总价\r\n")); // 注意：输出的字节数与字符数并不一致
-
-		fileOut.Open(filename, CFile::modeCreate | CFile::modeWrite);
-		fileOut.Write(&UNICODE_TXT_FLG, 2);
-		fileOut.Write(lineInfo, lineInfo.GetLength() * 2);
-
-		for (int row = 0; row < finalList.GetItemCount(); row++)
-		{
-			lineInfo.Format(_T("{},{},{},{},{}"),
-				finalList.GetItemText(row, 0),
-				finalList.GetItemText(row, 1),
-				finalList.GetItemText(row, 2),
-				finalList.GetItemText(row, 3),
-				finalList.GetItemText(row, 4));
-			fileOut.Write(lineInfo, lineInfo.GetLength() * 2);
-		}
-	}
-
-	else
-	{
-
-		if (filename.Right(4) == _T(".xls"))
-		{
-			Book* book = xlCreateBook();
-			exportBook(book, filename);
-			book->release();
-		}
-		else if (filename.Right(5) == _T(".xlsx"))
-		{
-			Book* book = xlCreateXMLBook();
-			exportBook(book, filename);
-			book->release();
-		}
-		else
-		{
-			MessageBox(_T("请选择正确的文件格式！"));
-		}
-	}
-
-}
-
-
+//导入表格文件
 void CInvoiceDividerDlg::importBook(Book* book, CString filename)
 {
-	// TODO: 在此处添加实现代码.
-
 	book->setKey(L"TommoT", L"windows-2421220b07c2e10a6eb96768a2p7r6gc");
 
 	CString temp;
@@ -936,10 +867,9 @@ void CInvoiceDividerDlg::importBook(Book* book, CString filename)
 }
 
 
+//去掉末尾的零
 CString CInvoiceDividerDlg::removeEndZero(CString strNum)
 {
-	// TODO: 在此处添加实现代码.
-
 	BOOL decimal = FALSE;
 
 	for (int i = strNum.GetLength() - 1; i > -1; i--)
@@ -959,14 +889,60 @@ CString CInvoiceDividerDlg::removeEndZero(CString strNum)
 		}
 	}
 	return strNum;
-
 }
 
 
+//导出文件
+void CInvoiceDividerDlg::exportFile(CString filename)
+{
+	if (filename.Right(4) == _T(".txt"))
+	{
+		const int UNICODE_TXT_FLG = 0xFEFF; //UNICODE文本标示
+		CString lineInfo;
+		lineInfo.Format(_T("发票,项目,单价,数量,总价\r\n")); // 注意：输出的字节数与字符数并不一致
+
+		CFile fileOut;
+		fileOut.Open(filename, CFile::modeCreate | CFile::modeWrite);
+
+		fileOut.Write(&UNICODE_TXT_FLG, 2);
+		fileOut.Write(lineInfo, lineInfo.GetLength() * 2);
+
+		for (int row = 0; row < finalList.GetItemCount(); row++)
+		{
+			lineInfo.Format(_T("{},{},{},{},{}"),
+				finalList.GetItemText(row, 0),
+				finalList.GetItemText(row, 1),
+				finalList.GetItemText(row, 2),
+				finalList.GetItemText(row, 3),
+				finalList.GetItemText(row, 4));
+			fileOut.Write(lineInfo, lineInfo.GetLength() * 2);
+		}
+	}
+	else
+	{
+		if (filename.Right(4) == _T(".xls"))
+		{
+			Book* book = xlCreateBook();
+			exportBook(book, filename);
+			book->release();
+		}
+		else if (filename.Right(5) == _T(".xlsx"))
+		{
+			Book* book = xlCreateXMLBook();
+			exportBook(book, filename);
+			book->release();
+		}
+		else
+		{
+			MessageBox(_T("请选择正确的文件格式！"));
+		}
+	}
+}
+
+
+//导出表格文件
 void CInvoiceDividerDlg::exportBook(Book* book, CString filename)
 {
-	// TODO: 在此处添加实现代码.
-
 	book->setKey(L"TommoT", L"windows-2421220b07c2e10a6eb96768a2p7r6gc");
 	
 	Sheet* sheet = book->addSheet(_T("Sheet") + book->sheetCount());
@@ -988,5 +964,4 @@ void CInvoiceDividerDlg::exportBook(Book* book, CString filename)
 	}
 
 	book->save(filename);
-
 }

@@ -13,6 +13,7 @@
 
 #endif //PCH_H
 
+//储存项目的编号、名称、单价、数量和总价的格式
 struct Invoice
 {
 	int invoice = 0;

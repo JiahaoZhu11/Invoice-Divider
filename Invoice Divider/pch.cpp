@@ -4,6 +4,7 @@
 
 // 当使用预编译的头时，需要使用此源文件，编译才能成功。
 
+//新建项目
 Invoice newInvoice(int invoice, CString iName, double iUprice, double iTprice, int iNum)
 {
 	Invoice i;

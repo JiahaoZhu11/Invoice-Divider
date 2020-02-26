@@ -34,23 +34,26 @@ protected:
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
 public:
-	afx_msg void OnBnClickedAdd();
 	CListCtrl initialList;
-	afx_msg void OnLvnItemchangedInput(NMHDR* pNMHDR, LRESULT* pResult);
 	CListCtrl finalList;
-	afx_msg void OnBnClickedDivide();
+
+	//操作函数
+	afx_msg void OnBnClickedAdd();
 	afx_msg void OnBnClickedDel();
 	afx_msg void OnBnClickedClean();
-	virtual BOOL PreTranslateMessage(MSG* pMsg);
-	BOOL addInvoice();
-	void division();
-	afx_msg void OnNMDblclkInput(NMHDR* pNMHDR, LRESULT* pResult);
-	void showEditWindow(NMHDR* pNMHDR, LRESULT* pResult);
+	afx_msg void OnBnClickedDivide();
 	afx_msg void OnBnClickedImport();
 	afx_msg void OnBnClickedExport();
+	afx_msg void OnNMDblclkInput(NMHDR* pNMHDR, LRESULT* pResult);
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
+
+	//辅助函数
+	BOOL addInvoice();
+	void division();
+	void showEditWindow(NMHDR* pNMHDR, LRESULT* pResult);
 	void importFile(CString filename);
-	void exportFile(CString filename);
 	void importBook(Book* book, CString filename);
 	CString removeEndZero(CString strNum);
+	void exportFile(CString filename);
 	void exportBook(Book* book, CString filename);
 };

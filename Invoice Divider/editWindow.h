@@ -26,17 +26,21 @@ protected:
 public:
 	virtual BOOL OnInitDialog();
 public:
+	//目标指针
 	Invoice* target;
 	CListCtrl* initialList;
+
+	//操作函数
 	afx_msg void OnEnKillfocusName();
 	afx_msg void OnEnKillfocusNum();
 	afx_msg void OnEnKillfocusUprice();
 	afx_msg void OnEnKillfocusTprice();
 	afx_msg void OnBnClickedEdit();
+	virtual BOOL PreTranslateMessage(MSG* pMsg);
 	afx_msg void OnClose();
+
+	//辅助函数
 	void display();
 	void modify();
-	virtual BOOL PreTranslateMessage(MSG* pMsg);
-	// 1 = name, 2 = num, 3 = uprice, 4 = tprice
 	BOOL InputCheck(int type);
 };
